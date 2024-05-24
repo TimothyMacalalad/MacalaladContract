@@ -1,3 +1,4 @@
+#MacalaladContract
 event MemberRegistered(address indexed member);
 event MemberUnregistered(address indexed member);
 
