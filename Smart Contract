@@ -1,48 +1,38 @@
-# Smart Contract
- // SPDX-License-Identifier: MIT
+# SmartContract
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-contract MemberRegistry {
-    mapping(address => bool) public members;
-    address[] public memberAddresses;
+contract TheNumberGame {
+    address public owner;
+    uint256 public winningNumber;
+    bool public gameEnded;
 
-    event MemberRegistered(address indexed member);
-    event MemberUnregistered(address indexed member);
+    event GameEnded(address indexed winner, uint256 winningNumber);
 
-    function register() public {
-        require(!members[msg.sender], "Member already registered");
-        
-        members[msg.sender] = true;
-        memberAddresses.push(msg.sender);
-        
-        emit MemberRegistered(msg.sender);
+    constructor() {
+        owner = msg.sender;
+        winningNumber = 42; // Initial winning number
+        gameEnded = false;
     }
 
-    function unregister() public {
-        require(members[msg.sender], "Member not registered");
+    function guess(uint256 number) public {
+        require(!gameEnded, "Game has ended");
 
-        for (uint256 i = 0; i < memberAddresses.length; i++) {
-            if (memberAddresses[i] == msg.sender) {
-                memberAddresses[i] = memberAddresses[memberAddresses.length - 1];
-                memberAddresses.pop();
-                break;
-            }
+        // Check if the guessed number matches the winning number
+        if (number == winningNumber) {
+            gameEnded = true;
+            emit GameEnded(msg.sender, winningNumber);
         }
-
-        members[msg.sender] = false;
-
-        emit MemberUnregistered(msg.sender);
     }
 
-    function assertSum(uint256 a, uint256 b) public pure returns (uint256) {
-        assert(a + b <= 200);
+    function setWinningNumber(uint256 number) public {
+        require(msg.sender == owner, "Only owner can set the winning number");
+        require(!gameEnded, "Game has already ended");
+
+        winningNumber = number;
+    }
+
+    function assertExample(uint256 a, uint256 b) public pure returns (uint256) {
+        assert(a + b <= 100);
         return a + b;
     }
-
-    function checkNonZero(uint256 value) public pure returns (uint256) {
-        if (value == 0) {
-            revert("Value cannot be zero");
-        }
-        return value;
-    }
-}
