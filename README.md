@@ -16,21 +16,17 @@ remix.ethereum.org
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-contract MemberRegistry {
-    mapping(address => bool) public members;
-    address[] public memberAddresses;
+contract SimpleBank {
+    address public bankOwner;
+    mapping(address => uint256) public accountBalances;
 
-    event MemberRegistered(address indexed member);
-    event MemberUnregistered(address indexed member);
+    event DepositMade(address indexed accountHolder, uint256 depositAmount);
+    event WithdrawalMade(address indexed accountHolder, uint256 withdrawalAmount);
 
-    function register() public {
-        require(!members[msg.sender], "Member already registered");
-        
-        members[msg.sender] = true;
-        memberAddresses.push(msg.sender);
-        
-        emit MemberRegistered(msg.sender);
+    constructor() {
+        bankOwner = msg.sender;
     }
+
 
 ## Authors
 
